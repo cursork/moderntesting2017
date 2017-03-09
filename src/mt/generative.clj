@@ -77,11 +77,6 @@
 ;; }}}
 
 ;; Actions {{{
-(defn some-set-action
-  []
-  (let [sel #(first (shuffle %))]
-    [(if (< (rand) 0.5) 'add 'remove) (string-gen)]))
-
 (defn apply-action
   [set [f arg]]
   (let [actualf @(resolve f)]
@@ -127,9 +122,20 @@
     (let [to-remove    (rand-int (count shrinked-actions))
           new-actions  (concat (take to-remove shrinked-actions)
                                (drop (inc to-remove) shrinked-actions))]
-      (prn n)
       (if-not (consistent? new-actions)
         (recur new-actions (dec n))
         (recur shrinked-actions (dec n)))))))
 ;; }}}
 
+;; Execute in a REPL {{{
+(comment
+  ;; Find series of actions that breaks the model
+  (def bad (try (test-set-is-a-set)
+             (catch clojure.lang.ExceptionInfo e
+               (-> e ex-data :actions))))
+  ;; Shrink those 10000 actions down to the ones that actually triggered the
+  ;; bug. N.B. Inefficient / naïve! Takes a while
+  (def shrunk (shrink-that bad))
+  ;; Demonstrate this has found the intentional hashCode bug
+  (map #(.hashCode (second %)) shrunk))
+;; }}}
