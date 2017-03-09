@@ -119,12 +119,12 @@
   (loop [shrinked-actions actions n 10000]
     (if (<= n 0)
       shrinked-actions
-    (let [to-remove    (rand-int (count shrinked-actions))
-          new-actions  (concat (take to-remove shrinked-actions)
-                               (drop (inc to-remove) shrinked-actions))]
-      (if-not (consistent? new-actions)
-        (recur new-actions (dec n))
-        (recur shrinked-actions (dec n)))))))
+      (let [to-remove    (rand-int (count shrinked-actions))
+            new-actions  (concat (take to-remove shrinked-actions)
+                                 (drop (inc to-remove) shrinked-actions))]
+        (if-not (consistent? new-actions)
+          (recur new-actions (dec n))
+          (recur shrinked-actions (dec n)))))))
 ;; }}}
 
 ;; Execute in a REPL {{{
